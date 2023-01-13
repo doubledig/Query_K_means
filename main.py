@@ -36,7 +36,7 @@ if __name__ == '__main__':
     c_h = torch.randint(train_data_x.size(0), size=(kc, 1), dtype=torch.long, device=device)
     c_h = train_data_x[c_h[:, 0], :]
     c = torch.zeros(kc, (train_data_x.size(1)), device=device)
-    while (c - c_h).abs().sum() > 1e-10:
+    while not torch.equal(c, c_h):
         c = c_h.clone()
         # 进行分类，得到cl = 60000
         cl = torch.argmin(torch.cdist(train_data_x, c_h), dim=1)
