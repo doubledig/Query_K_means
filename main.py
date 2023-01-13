@@ -33,31 +33,33 @@ if __name__ == '__main__':
     print('- formal k-means train-')
     s_time = time.time()
     # 随机确定聚类中心
-    c_h = torch.randint(train_data_x.size(0), size=(kc, 1), dtype=torch.long, device=device)
-    c_h = train_data_x[c_h[:, 0], :]
-    c = torch.zeros(kc, (train_data_x.size(1)), device=device)
-    while not torch.equal(c, c_h):
-        c = c_h.clone()
-        # 进行分类，得到cl = 60000
+    hp = set()
+    while len(hp) < 10:
+        c_h = torch.randint(train_data_x.size(0), size=(kc, 1), dtype=torch.long, device=device)
+        c_h = train_data_x[c_h[:, 0], :]
+        c = torch.zeros(kc, (train_data_x.size(1)), device=device)
+        while not torch.equal(c, c_h):
+            c = c_h.clone()
+            # 进行分类，得到cl = 60000
+            cl = torch.argmin(torch.cdist(train_data_x, c_h), dim=1)
+            # 重新计算中心
+            for i in range(kc):
+                index = torch.eq(cl, i)
+                c_h[i, :] = train_data_x[index, :].sum(dim=0) / index.sum()
+        # 聚类中心打标签，
         cl = torch.argmin(torch.cdist(train_data_x, c_h), dim=1)
-        # 重新计算中心
+        hp = set()
         for i in range(kc):
             index = torch.eq(cl, i)
-            c_h[i, :] = train_data_x[index, :].sum(dim=0) / index.sum()
-    # 聚类中心打标签，
-    cl = torch.argmin(torch.cdist(train_data_x, c_h), dim=1)
-    hp = []
-    for i in range(kc):
-        index = torch.eq(cl, i)
-        h = 0
-        a = 0
-        for j in range(kc):
-            b = torch.eq(train_data_y[index], j).sum()
-            if b > a:
-                a = int(b)
-                h = j
-        hp.append(h)
-        c[h, :] = c_h[i, :]
+            h = 0
+            a = 0
+            for j in range(kc):
+                b = torch.eq(train_data_y[index], j).sum()
+                if b > a:
+                    a = int(b)
+                    h = j
+            hp.add(h)
+            c[h, :] = c_h[i, :]
     print(hp)  # 输出判断的标签
     print('- k-means cluster centers processed in {:.3f} -'.format(time.time() - s_time))
     '''
