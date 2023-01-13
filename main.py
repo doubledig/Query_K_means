@@ -46,6 +46,7 @@ if __name__ == '__main__':
             c_h[i, :] = train_data_x[index, :].sum(dim=0) / index.sum()
     # 聚类中心打标签，
     cl = torch.argmin(torch.cdist(train_data_x, c_h), dim=1)
+    hp = []
     for i in range(kc):
         index = torch.eq(cl, i)
         h = 0
@@ -55,8 +56,9 @@ if __name__ == '__main__':
             if b > a:
                 a = int(b)
                 h = j
-        print(h)  # 输出判断的标签
+        hp.append(h)
         c[h, :] = c_h[i, :]
+    print(hp)  # 输出判断的标签
     print('- k-means cluster centers processed in {:.3f} -'.format(time.time() - s_time))
     '''
         query K-means
@@ -94,4 +96,3 @@ if __name__ == '__main__':
     acc = torch.eq(test_data_y, cl).sum() / test_data_y.size(0) * 100
     print('- query k-means accuracy is {:.2f}% -'.format(acc))
     pass
-    # 7 0 3 2 4 0 8 6 1 3
