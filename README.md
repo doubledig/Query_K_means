@@ -1,0 +1,3 @@
+课程大作业，实现论文Query K-means Clustering and the Double Dixie Cup Problem中的算法1，并在mnist上和传统k-means进行比较  
+使用传统k-means计算mnist数据集聚类中心时效果很差，推测是数据分布比较离散且相互重叠，
+在使用真实标签对聚类中心打标签时存在不同中心打了相同标签的情况，可以多次训练直到无冲突或初始选点上下功夫
